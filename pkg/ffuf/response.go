@@ -17,6 +17,7 @@ type Response struct {
 	Request       *Request
 	Raw           string
 	ResultFile    string
+	RedirectChain []string
 }
 
 // GetRedirectLocation returns the redirect location for a 3xx redirect HTTP response
@@ -47,6 +48,18 @@ func (resp *Response) GetRedirectLocation(absolute bool) string {
 }
 
 func NewResponse(httpresp *http.Response, req *Request) Response {
+	// Building a redirect chain by iterating over each Request's Response
+	// until there are no more Responses left. Request.Response is the redirect
+	// response which caused this request to be created. This field is
+	// only populated during client redirects.
+	// Source: https://golang.org/pkg/net/http/#Request
+	redirectChain := []string{httpresp.Request.URL.String()}
+	redirectReq := httpresp.Request.Response
+	for redirectReq != nil {
+		redirectChain = append([]string{redirectReq.Request.URL.String()}, redirectChain...)
+		redirectReq = redirectReq.Request.Response
+	}
+
 	var resp Response
 	resp.Request = req
 	resp.StatusCode = int64(httpresp.StatusCode)
@@ -54,5 +67,6 @@ func NewResponse(httpresp *http.Response, req *Request) Response {
 	resp.Cancelled = false
 	resp.Raw = ""
 	resp.ResultFile = ""
+	resp.RedirectChain = redirectChain[1:]  // Remove the original URL.
 	return resp
 }

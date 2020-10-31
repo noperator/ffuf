@@ -37,6 +37,7 @@ type Result struct {
 	ContentWords     int64             `json:"words"`
 	ContentLines     int64             `json:"lines"`
 	RedirectLocation string            `json:"redirectlocation"`
+	RedirectChain    []string          `json:"redirectchain"`
 	Url              string            `json:"url"`
 	ResultFile       string            `json:"resultfile"`
 	Host             string            `json:"host"`
@@ -301,6 +302,7 @@ func (s *Stdoutput) Result(resp ffuf.Response) {
 			ContentWords:     resp.ContentWords,
 			ContentLines:     resp.ContentLines,
 			RedirectLocation: resp.GetRedirectLocation(false),
+			RedirectChain:    resp.RedirectChain,
 			Url:              resp.Request.Url,
 			ResultFile:       resp.ResultFile,
 			Host:             resp.Request.Host,

@@ -23,6 +23,7 @@ type JsonResult struct {
 	ContentWords     int64             `json:"words"`
 	ContentLines     int64             `json:"lines"`
 	RedirectLocation string            `json:"redirectlocation"`
+	RedirectChain    []string          `json:"redirectchain"`
 	ResultFile       string            `json:"resultfile"`
 	Url              string            `json:"url"`
 	Host             string            `json:"host"`
@@ -70,6 +71,7 @@ func writeJSON(config *ffuf.Config, res []Result) error {
 			ContentWords:     r.ContentWords,
 			ContentLines:     r.ContentLines,
 			RedirectLocation: r.RedirectLocation,
+			RedirectChain:    r.RedirectChain,
 			ResultFile:       r.ResultFile,
 			Url:              r.Url,
 			Host:             r.Host,
